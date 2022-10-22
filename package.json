@@ -12,9 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.0",
-    "@faker-js/faker": "^7.6.0",
     "@tanstack/react-table": "^8.5.15",
-    "faker": "^6.6.6",
     "graphql": "^16.6.0",
     "next": "12.3.1",
     "react": "18.2.0",
@@ -23,23 +21,23 @@
     "styled-components": "^5.3.6"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@types/node": "18.11.3",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
     "@types/styled-components": "^5.1.26",
-    "eslint-config-next": "12.3.1",
-    "typescript": "4.8.4",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/experimental-utils": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.26.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-next": "12.3.1",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "@babel/eslint-parser": "^7.19.1"
+    "typescript": "4.8.4"
   },
   "resolutions": {
     "styled-components": "^5"
