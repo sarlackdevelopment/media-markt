@@ -1,38 +1,17 @@
-import React, { useMemo, useReducer, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NextPage } from 'next';
 import { gql } from '@apollo/client';
-import styled from 'styled-components';
 
-//import './index.css'
-
-import {
-    Column,
-    Table as ReactTable,
-    //PaginationState,
-    useReactTable,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    ColumnDef,
-    //OnChangeFn,
-    flexRender
-} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 
 import client from '../apollo-client';
+import Table from './components/Table';
+import Pagination from './components/Pagination';
 
 export type TIssue = {
     title: string,
     url: string
 }
-
-// const IssueListWrapper = styled.button`
-//   /* Adapt the colors based on primary prop */
-//   font-size: 1em;
-//   margin: 1em;
-//   padding: 0.25em 1em;
-//   border: 2px solid palevioletred;
-//   border-radius: 3px;
-// `;
 
 export async function getStaticProps() {
     const { data } = await client.query({
@@ -56,133 +35,34 @@ export async function getStaticProps() {
     };
 }
 
-function Table({
+const DataTable = ({
     data,
     columns
 }: {
     data: TIssue[]
     columns: ColumnDef<TIssue>[]
-}) {
-    const table = useReactTable({
-        data,
-        columns,
-        // Pipeline
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        //
-        debugTable: true
-    });
+}) => {
+    console.log('888');
+    // const table = useReactTable({
+    //     data,
+    //     columns,
+    //     // Pipeline
+    //     getCoreRowModel: getCoreRowModel(),
+    //     getFilteredRowModel: getFilteredRowModel(),
+    //     getPaginationRowModel: getPaginationRowModel(),
+    //     //
+    //     debugTable: true
+    // });
 
     return (
-        <div className="p-2">
-            <div className="h-2" />
-            <table>
-                <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <th key={header.id} colSpan={header.colSpan}>
-                                    {header.isPlaceholder ? null : (
-                                        <div>
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                            {/*{header.column.getCanFilter() ? (*/}
-                                            {/*    <div>*/}
-                                            {/*        <Filter column={header.column} table={table} />*/}
-                                            {/*    </div>*/}
-                                            {/*) : null}*/}
-                                        </div>
-                                    )}
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className="h-2" />
-            <div className="flex items-center gap-2">
-                <button
-                    className="border rounded p-1"
-                    onClick={() => table.setPageIndex(0)}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    {'<<'}
-                </button>
-                <button
-                    className="border rounded p-1"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    {'<'}
-                </button>
-                <button
-                    className="border rounded p-1"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    {'>'}
-                </button>
-                <button
-                    className="border rounded p-1"
-                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                    disabled={!table.getCanNextPage()}
-                >
-                    {'>>'}
-                </button>
-                <span className="flex items-center gap-1">
-                    <div>Page</div>
-                    <strong>
-                        {table.getState().pagination.pageIndex + 1} of{' '}
-                        {table.getPageCount()}
-                    </strong>
-                </span>
-                <span className="flex items-center gap-1">
-          | Go to page:
-                    <input
-                        type="number"
-                        defaultValue={table.getState().pagination.pageIndex + 1}
-                        onChange={(e) => {
-                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                            table.setPageIndex(page);
-                        }}
-                        className="border p-1 rounded w-16"
-                    />
-                </span>
-                <select
-                    value={table.getState().pagination.pageSize}
-                    onChange={(e) => {
-                        table.setPageSize(Number(e.target.value));
-                    }}
-                >
-                    {[10, 20, 30, 40, 50].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                            Show {pageSize}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>{table.getRowModel().rows.length} Rows</div>
-            <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>
-        </div>
+        <>
+            <Table data={data} columns={columns} />
+            <Pagination data={data} columns={columns} />
+            {/*  <div>{table.getRowModel().rows.length} Rows</div>*/}
+            {/*  <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>*/}
+        </>
     );
-}
+};
 // function Filter({
 //     column,
 //     table
@@ -233,7 +113,7 @@ function Table({
 // }
 
 const IssueList: NextPage = (propsPage) => {
-    const rerender = useReducer(() => ({}), {})[1];
+    //const rerender = useReducer(() => ({}), {})[1];
     const columns = useMemo<ColumnDef<TIssue>[]>(
         () => [{
             header: 'Issue',
@@ -316,16 +196,16 @@ const IssueList: NextPage = (propsPage) => {
 
     return (
         <>
-            <Table
+            <DataTable
                 {...{
                     data,
                     columns
                 }}
             />
             <hr />
-            <div>
-                <button onClick={() => rerender()}>Force Rerender</button>
-            </div>
+            {/*<div>*/}
+            {/*    <button onClick={() => rerender()}>Force Rerender</button>*/}
+            {/*</div>*/}
             {/*<div>*/}
             {/*    <button onClick={() => refreshData()}>Refresh Data</button>*/}
             {/*</div>*/}
