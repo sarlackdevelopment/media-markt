@@ -1,11 +1,8 @@
-import {NextPage} from "next";
-import client from "../apollo-client";
-import {gql} from "@apollo/client";
+import { NextPage } from 'next';
+import { gql } from '@apollo/client';
 import styled from 'styled-components';
 
 //import './index.css'
-
-import { makeData, Person } from './makeData'
 
 import {
     Column,
@@ -17,9 +14,11 @@ import {
     getPaginationRowModel,
     ColumnDef,
     OnChangeFn,
-    flexRender,
-} from '@tanstack/react-table'
-import {useMemo, useReducer, useState} from "react";
+    flexRender
+} from '@tanstack/react-table';
+import { useMemo, useReducer, useState } from 'react';
+import { makeData, Person } from './makeData';
+import client from '../apollo-client';
 
 const IssueListWrapper = styled.button`
   /* Adapt the colors based on primary prop */
@@ -42,20 +41,20 @@ export async function getStaticProps() {
           }
         }
       }
-    `,
+    `
     });
 
     return {
         props: {
             data
-        },
+        }
     };
 }
 
 function Table({
-                   data,
-                   columns,
-               }: {
+    data,
+    columns
+}: {
     data: Person[]
     columns: ColumnDef<Person>[]
 }) {
@@ -67,18 +66,17 @@ function Table({
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         //
-        debugTable: true,
-    })
+        debugTable: true
+    });
 
     return (
         <div className="p-2">
             <div className="h-2" />
             <table>
                 <thead>
-                {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                        {headerGroup.headers.map(header => {
-                            return (
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
                                 <th key={header.id} colSpan={header.colSpan}>
                                     {header.isPlaceholder ? null : (
                                         <div>
@@ -94,28 +92,23 @@ function Table({
                                         </div>
                                     )}
                                 </th>
-                            )
-                        })}
-                    </tr>
-                ))}
+                            ))}
+                        </tr>
+                    ))}
                 </thead>
                 <tbody>
-                {table.getRowModel().rows.map(row => {
-                    return (
+                    {table.getRowModel().rows.map((row) => (
                         <tr key={row.id}>
-                            {row.getVisibleCells().map(cell => {
-                                return (
-                                    <td key={cell.id}>
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </td>
-                                )
-                            })}
+                            {row.getVisibleCells().map((cell) => (
+                                <td key={cell.id}>
+                                    {flexRender(
+                                        cell.column.columnDef.cell,
+                                        cell.getContext()
+                                    )}
+                                </td>
+                            ))}
                         </tr>
-                    )
-                })}
+                    ))}
                 </tbody>
             </table>
             <div className="h-2" />
@@ -149,31 +142,31 @@ function Table({
                     {'>>'}
                 </button>
                 <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-              {table.getPageCount()}
-          </strong>
-        </span>
+                    <div>Page</div>
+                    <strong>
+                        {table.getState().pagination.pageIndex + 1} of{' '}
+                        {table.getPageCount()}
+                    </strong>
+                </span>
                 <span className="flex items-center gap-1">
           | Go to page:
-          <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={e => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0
-                  table.setPageIndex(page)
-              }}
-              className="border p-1 rounded w-16"
-          />
-        </span>
+                    <input
+                        type="number"
+                        defaultValue={table.getState().pagination.pageIndex + 1}
+                        onChange={(e) => {
+                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                            table.setPageIndex(page);
+                        }}
+                        className="border p-1 rounded w-16"
+                    />
+                </span>
                 <select
                     value={table.getState().pagination.pageSize}
-                    onChange={e => {
-                        table.setPageSize(Number(e.target.value))
+                    onChange={(e) => {
+                        table.setPageSize(Number(e.target.value));
                     }}
                 >
-                    {[10, 20, 30, 40, 50].map(pageSize => (
+                    {[10, 20, 30, 40, 50].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                             Show {pageSize}
                         </option>
@@ -183,45 +176,43 @@ function Table({
             <div>{table.getRowModel().rows.length} Rows</div>
             <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>
         </div>
-    )
+    );
 }
 function Filter({
-                    column,
-                    table,
-                }: {
+    column,
+    table
+}: {
     column: Column<any, any>
     table: ReactTable<any>
 }) {
     const firstValue = table
         .getPreFilteredRowModel()
-        .flatRows[0]?.getValue(column.id)
+        .flatRows[0]?.getValue(column.id);
 
-    const columnFilterValue = column.getFilterValue()
+    const columnFilterValue = column.getFilterValue();
 
     return typeof firstValue === 'number' ? (
         <div className="flex space-x-2">
             <input
                 type="number"
                 value={(columnFilterValue as [number, number])?.[0] ?? ''}
-                onChange={e =>
-                    column.setFilterValue((old: [number, number]) => [
-                        e.target.value,
-                        old?.[1],
-                    ])
+                onChange={(e) => column.setFilterValue((old: [number, number]) => [
+                    e.target.value,
+                    old?.[1]
+                ])
                 }
-                placeholder={`Min`}
+                placeholder={'Min'}
                 className="w-24 border shadow rounded"
             />
             <input
                 type="number"
                 value={(columnFilterValue as [number, number])?.[1] ?? ''}
-                onChange={e =>
-                    column.setFilterValue((old: [number, number]) => [
-                        old?.[0],
-                        e.target.value,
-                    ])
+                onChange={(e) => column.setFilterValue((old: [number, number]) => [
+                    old?.[0],
+                    e.target.value
+                ])
                 }
-                placeholder={`Max`}
+                placeholder={'Max'}
                 className="w-24 border shadow rounded"
             />
         </div>
@@ -229,44 +220,43 @@ function Filter({
         <input
             type="text"
             value={(columnFilterValue ?? '') as string}
-            onChange={e => column.setFilterValue(e.target.value)}
-            placeholder={`Search...`}
+            onChange={(e) => column.setFilterValue(e.target.value)}
+            placeholder={'Search...'}
             className="w-36 border shadow rounded"
         />
-    )
+    );
 }
 
 const IssueList: NextPage = (props) => {
-
-    const rerender = useReducer(() => ({}), {})[1]
+    const rerender = useReducer(() => ({}), {})[1];
     const columns = useMemo<ColumnDef<Person>[]>(
         () => [
             {
                 header: 'Name',
-                footer: props => props.column.id,
+                footer: (props) => props.column.id,
                 columns: [
                     {
                         accessorKey: 'firstName',
-                        cell: info => info.getValue(),
-                        footer: props => props.column.id,
+                        cell: (info) => info.getValue(),
+                        footer: (props) => props.column.id
                     },
                     {
-                        accessorFn: row => row.lastName,
+                        accessorFn: (row) => row.lastName,
                         id: 'lastName',
-                        cell: info => info.getValue(),
+                        cell: (info) => info.getValue(),
                         header: () => <span>Last Name</span>,
-                        footer: props => props.column.id,
-                    },
-                ],
+                        footer: (props) => props.column.id
+                    }
+                ]
             },
             {
                 header: 'Info',
-                footer: props => props.column.id,
+                footer: (props) => props.column.id,
                 columns: [
                     {
                         accessorKey: 'age',
                         header: () => 'Age',
-                        footer: props => props.column.id,
+                        footer: (props) => props.column.id
                     },
                     {
                         header: 'More Info',
@@ -274,34 +264,37 @@ const IssueList: NextPage = (props) => {
                             {
                                 accessorKey: 'visits',
                                 header: () => <span>Visits</span>,
-                                footer: props => props.column.id,
+                                footer: (props) => props.column.id
                             },
                             {
                                 accessorKey: 'status',
                                 header: 'Status',
-                                footer: props => props.column.id,
+                                footer: (props) => props.column.id
                             },
                             {
                                 accessorKey: 'progress',
                                 header: 'Profile Progress',
-                                footer: props => props.column.id,
-                            },
-                        ],
-                    },
-                ],
-            },
+                                footer: (props) => props.column.id
+                            }
+                        ]
+                    }
+                ]
+            }
         ],
         []
     );
-    const [data, setData] = useState(() => makeData(100000))
-    const refreshData = () => setData(() => makeData(100000))
+    const [data, setData] = useState(() => makeData(10));
+    const refreshData = () => setData(() => makeData(10));
+
+    console.log('-----------');
+    console.log(props);
 
     return (
         <>
             <Table
                 {...{
                     data,
-                    columns,
+                    columns
                 }}
             />
             <hr />
@@ -312,11 +305,8 @@ const IssueList: NextPage = (props) => {
                 <button onClick={() => refreshData()}>Refresh Data</button>
             </div>
         </>
-    )
-
-    // console.log('-----------');
-    // console.log(props);
+    );
     // return <>It works!<IssueListWrapper>Some</IssueListWrapper></>
-}
+};
 
-export default IssueList
+export default IssueList;

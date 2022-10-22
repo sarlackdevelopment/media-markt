@@ -1,3 +1,113 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true
+  },
+  "plugins": [
+    "babel",
+    "react",
+    "@typescript-eslint",
+    "eslint-plugin-import"
+  ],
+  "extends": [
+    "airbnb-base",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["pages"]
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "no-bitwise": "off",
+    "max-lines": [
+      "error",
+      {
+        "max": 500
+      }
+    ],
+    "func-names": "off",
+    "import/prefer-default-export": 0,
+    "no-underscore-dangle": "off",
+    "consistent-return": "off",
+    "no-useless-constructor": "off",
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "linebreak-style": 0,
+    "indent": [
+      "error",
+      4
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "comments": 300
+      }
+    ],
+    "no-multi-spaces": [
+      "error",
+      {
+        "exceptions": {
+          "Property": true,
+          "VariableDeclarator": true
+        }
+      }
+    ],
+    "react/prop-types": 0,
+    "react/no-deprecated": 0,
+    "no-nested-ternary": 0,
+    "react/no-unescaped-entities": 0,
+    "no-param-reassign": 0,
+    "no-console": 0,
+    "class-methods-use-this": 0,
+    "newline-per-chained-call": 0,
+    "function-paren-newline": 0,
+    "no-invalid-this": 0,
+    "babel/no-invalid-this": 1,
+    "global-require": 0,
+    "spaced-comment": "off",
+    "no-continue": "off",
+    "default-case": "off",
+    "no-plusplus": "off",
+    "radix": [
+      "error",
+      "as-needed"
+    ],
+    "no-named-as-default-member": 0,
+    "no-dynamic-require": 0,
+    "camelcase": 0,
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"]
+  },
+  "parser": "@typescript-eslint/parser",
+  "globals": {
+    "JSX": true
+  }
 }
