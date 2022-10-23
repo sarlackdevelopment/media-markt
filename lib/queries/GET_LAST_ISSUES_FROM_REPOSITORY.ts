@@ -6,7 +6,7 @@ export const GET_LAST_ISSUES_FROM_REPOSITORY = gql`
             issues(last: $last, states: $states, orderBy: $orderBy) {
                 edges {
                     cursor
-                    node {title, url, state}
+                    node {title, url, state, number}
                 }
                 pageInfo {
                     endCursor

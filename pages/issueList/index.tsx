@@ -15,7 +15,8 @@ import client from '../apollo-client';
 export type TIssue = {
     title: string,
     url: string,
-    status: string
+    state: string,
+    number: number
 }
 //
 // export async function getStaticProps() {

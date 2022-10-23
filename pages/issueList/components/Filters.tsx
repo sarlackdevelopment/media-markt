@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
-import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
-import { dataVar, paginationVar } from '../../../lib/cache';
+import ClipLoader from 'react-spinners/ClipLoader';
+import {
+    ORDER_BY, OWNER, REPOSITORY_NAME, STATES
+} from '../../../constants';
+import { dataVar, errorVar, paginationVar } from '../../../lib/cache';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 
 const StyledFilters = styled.div`
@@ -38,8 +41,8 @@ const StyledFilters = styled.div`
 
 const Filters = () => {
     const pagination = useReactiveVar(paginationVar);
-    const [fetchIssuesQuery] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
-    const handlerFilter = async (currentState) => {
+    const [fetchIssuesQuery, { loading, error }] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
+    const handlerFilter = async (currentState: string) => {
         //#Спросить - нормальна ли такая реализация
         const response = await fetchIssuesQuery({
             variables: {
@@ -68,6 +71,9 @@ const Filters = () => {
         });
         dataVar(edges.map(({ node }) => ({ ...node })));
     };
+    if (error) {
+        errorVar(error);
+    }
     return <StyledFilters>
         <div className='d-flex'>
             <span className='m-1'>state</span>
@@ -75,61 +81,19 @@ const Filters = () => {
                 defaultValue='CLOSED'
                 onChange={(e) => handlerFilter(e.target.value)}
                 className='m-1 select-style'>
-                <option key={'OPEN'} value={'OPEN'}>
-                    OPEN
+                <option key={STATES.OPEN} value={STATES.OPEN}>
+                    {STATES.OPEN}
                 </option>
-                <option key={'CLOSED'} value={'CLOSED'}>
-                    CLOSED
+                <option key={STATES.CLOSED} value={STATES.CLOSED}>
+                    {STATES.CLOSED}
                 </option>
             </select>
         </div>
-        {/*<input className='m-1 input-style' defaultValue='state' />*/}
-
-        {/*<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: '1fr 1fr 1fr' }}>*/}
-        {/*    <span style={{ alignSelf: 'center' }}>Server side filters</span>*/}
-        {/*    <input className='m-1 input-style' defaultValue='state' />*/}
-        {/*    <div />*/}
-
-        {/*    /!*<div className='d-flex'>*!/*/}
-        {/*    /!*    <span>Server side filters</span>*!/*/}
-        {/*    /!*    <div className='d-flex'>*!/*/}
-        {/*    /!*        <span className='m-1'>state</span>*!/*/}
-        {/*    /!*        <input className='m-1 input-style' defaultValue='state' />*!/*/}
-        {/*    /!*    </div>*!/*/}
-        {/*    /!*</div>*!/*/}
-        {/*    /!*<div className='d-flex'>*!/*/}
-        {/*    /!*    <span>Client side filters</span>*!/*/}
-        {/*    /!*    <div className='d-flex'>*!/*/}
-        {/*    /!*        <span className='m-1'>title</span>*!/*/}
-        {/*    /!*        <input className='m-1 input-style' defaultValue='title' />*!/*/}
-        {/*    /!*    </div>*!/*/}
-        {/*    /!*    <div className='d-flex'>*!/*/}
-        {/*    /!*        <span className='m-1'>url</span>*!/*/}
-        {/*    /!*        <input className='m-1 input-style' defaultValue='url' />*!/*/}
-        {/*    /!*    </div>*!/*/}
-        {/*    /!*</div>*!/*/}
-        {/*</div>*/}
-
-        {/*<div className='d-flex-column'>*/}
-        {/*    <div className='d-flex'>*/}
-        {/*        <span>Server side filters</span>*/}
-        {/*        <div className='d-flex'>*/}
-        {/*            <span className='m-1'>state</span>*/}
-        {/*            <input className='m-1 input-style' defaultValue='state' />*/}
-        {/*        </div>*/}
-        {/*    </div>*/}
-        {/*    <div className='d-flex'>*/}
-        {/*        <span>Client side filters</span>*/}
-        {/*        <div className='d-flex'>*/}
-        {/*            <span className='m-1'>title</span>*/}
-        {/*            <input className='m-1 input-style' defaultValue='title' />*/}
-        {/*        </div>*/}
-        {/*        <div className='d-flex'>*/}
-        {/*            <span className='m-1'>url</span>*/}
-        {/*            <input className='m-1 input-style' defaultValue='url' />*/}
-        {/*        </div>*/}
-        {/*    </div>*/}
-        {/*</div>*/}
+        <ClipLoader
+            loading={loading}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+        />
     </StyledFilters>;
 };
 

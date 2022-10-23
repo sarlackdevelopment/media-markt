@@ -13,7 +13,7 @@ export const GET_NEXT_ISSUES_FROM_REPOSITORY = gql`
             issues(first: $first, states: $states, after: $cursor, orderBy: $orderBy) {
                 edges {
                     cursor
-                    node {title, url, state}
+                    node {title, url, state, number}
                 }
                 pageInfo {
                     startCursor

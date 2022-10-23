@@ -12,12 +12,11 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.0",
-    "@tanstack/react-table": "^8.5.15",
     "graphql": "^16.6.0",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-table": "^7.8.0",
+    "react-spinners": "^0.13.6",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

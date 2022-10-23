@@ -1,4 +1,6 @@
-import { InMemoryCache, makeVar, ReactiveVar } from '@apollo/client';
+import {
+    ApolloError, InMemoryCache, makeVar, ReactiveVar
+} from '@apollo/client';
 import { TIssue } from '../pages/issueList';
 
 type TPagination = {
@@ -12,6 +14,7 @@ type TPagination = {
 }
 
 export const dataVar: ReactiveVar<TIssue[]> = makeVar<TIssue[]>([]);
+export const errorVar: ReactiveVar<ApolloError | null> = makeVar<ApolloError | null>(null);
 export const paginationVar: ReactiveVar<TPagination> = makeVar<TPagination>({
     startCursor: '',
     endCursor: '',
@@ -34,6 +37,11 @@ export const createCache = () => new InMemoryCache({
                 pagination: {
                     read() {
                         return paginationVar();
+                    }
+                },
+                error: {
+                    read() {
+                        return errorVar();
                     }
                 }
             }
