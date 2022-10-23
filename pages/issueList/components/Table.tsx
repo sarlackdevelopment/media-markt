@@ -37,7 +37,6 @@ const StyledTable = styled.table`
   tr:nth-child(odd) {
     background: #ebf3f9;
   }
-
   th:first-child {
     border-left: 1px solid #777777;
     border-bottom: 1px solid #777777;

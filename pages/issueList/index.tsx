@@ -1,39 +1,63 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NextPage } from 'next';
-import { gql } from '@apollo/client';
+import { gql, useLazyQuery, useReactiveVar } from '@apollo/client';
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import client from '../apollo-client';
 import Table from './components/Table';
 import Pagination from './components/Pagination';
+import { dataVar, paginationVar } from '../../lib/cache';
+import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 
 export type TIssue = {
     title: string,
-    url: string
+    url: string,
+    status: string
 }
 
-export async function getStaticProps() {
-    const { data } = await client.query({
-        query: gql`
-      query {
-        repository(owner:"facebook", name:"react") {
-          issues(last:20, states:CLOSED) {
-            edges {
-              node {title, url}
-            }
-          }
-        }
-      }
-    `
-    });
+// export async function getStaticProps() {
+//     const { data } = await client.query({
+//         query: gql`
+//       query {
+//         repository(owner:"facebook", name:"react") {
+//           issues(last:20, states:CLOSED) {
+//             edges {
+//               node {title, url}
+//             }
+//           }
+//         }
+//       }
+//     `
+//     });
+//
+//     return {
+//         props: {
+//             data
+//         }
+//     };
+// }
 
-    return {
-        props: {
-            data
-        }
-    };
-}
+// export async function getStaticProps() {
+//     const { data } = await client.query({
+//         query: gql`
+//       query {
+//         repository(owner:"facebook", name:"react") {
+//           issues(last:20, states:CLOSED) {
+//             edges {
+//               node {title, url}
+//             }
+//           }
+//         }
+//       }
+//     `
+//     });
+//
+//     return {
+//         props: {
+//             data
+//         }
+//     };
+// }
 
 const DataTable = ({
     data,
@@ -42,22 +66,12 @@ const DataTable = ({
     data: TIssue[]
     columns: ColumnDef<TIssue>[]
 }) => {
-    console.log('888');
-    // const table = useReactTable({
-    //     data,
-    //     columns,
-    //     // Pipeline
-    //     getCoreRowModel: getCoreRowModel(),
-    //     getFilteredRowModel: getFilteredRowModel(),
-    //     getPaginationRowModel: getPaginationRowModel(),
-    //     //
-    //     debugTable: true
-    // });
+    console.log(888);
 
     return (
         <>
             <Table data={data} columns={columns} />
-            <Pagination data={data} columns={columns} />
+            <Pagination />
             {/*  <div>{table.getRowModel().rows.length} Rows</div>*/}
             {/*  <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>*/}
         </>
@@ -112,8 +126,32 @@ const DataTable = ({
 //     );
 // }
 
-const IssueList: NextPage = (propsPage) => {
-    //const rerender = useReducer(() => ({}), {})[1];
+const IssueList: NextPage = () => {
+    const [fetchIssuesQuery] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
+    //const [data, setData] = useState([]);
+    const data = useReactiveVar(dataVar);
+    const pagination = useReactiveVar(paginationVar);
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetchIssuesQuery({
+                variables: {
+                    owner: 'facebook',
+                    name: 'react',
+                    first: 10,
+                    states: null,
+                    orderBy: {
+                        field: 'CREATED_AT',
+                        direction: 'ASC'
+                    }
+                }
+            });
+            const { edges, pageInfo } = response.data.repository.issues;
+            paginationVar({ ...pagination, endCursor: pageInfo.endCursor });
+            dataVar(edges.map(({ node }) => ({ ...node })));
+            // setData(() => response.data.repository.issues.edges.map(({ node }) => ({ ...node })));
+        })();
+    }, []);
     const columns = useMemo<ColumnDef<TIssue>[]>(
         () => [{
             header: 'Issue',
@@ -131,6 +169,14 @@ const IssueList: NextPage = (propsPage) => {
                     accessorKey: 'url',
                     //accessorFn: (row) => row.lastName,
                     header: () => <span>url</span>,
+                    cell: (info) => info.getValue()
+                    //footer: (props) => props.column.id
+                },
+                {
+                    id: 'state',
+                    accessorKey: 'state',
+                    //accessorFn: (row) => row.lastName,
+                    header: () => <span>status</span>,
                     cell: (info) => info.getValue()
                     //footer: (props) => props.column.id
                 }
@@ -188,7 +234,7 @@ const IssueList: NextPage = (propsPage) => {
         ],
         []
     );
-    const [data, setData] = useState(() => propsPage.data.repository.issues.edges.map(({ node }) => ({ ...node })));
+    //const [data, setData] = useState(() => propsPage.data.repository.issues.edges.map(({ node }) => ({ ...node })));
     //const refreshData = () => setData(() => makeData(10));
 
     //console.log('-----------');
@@ -202,7 +248,7 @@ const IssueList: NextPage = (propsPage) => {
                     columns
                 }}
             />
-            <hr />
+            {/*<hr />*/}
             {/*<div>*/}
             {/*    <button onClick={() => rerender()}>Force Rerender</button>*/}
             {/*</div>*/}
