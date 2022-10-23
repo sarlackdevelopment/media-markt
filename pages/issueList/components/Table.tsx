@@ -13,6 +13,7 @@ import { TIssue } from '../index';
 import { dataVar, paginationVar } from '../../../lib/cache';
 import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
+import Filters from './Filters';
 
 const StyledTable = styled.table`
   margin: 1em;
@@ -155,6 +156,7 @@ const Table = () => {
         })();
     }, [pagination.size]);
     return (<StyledTable>
+        <Filters />
         <table>
             {/*<thead>*/}
             {/*    {table.getHeaderGroups().map((headerGroup) => (*/}
