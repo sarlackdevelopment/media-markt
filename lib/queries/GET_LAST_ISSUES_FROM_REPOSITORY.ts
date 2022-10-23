@@ -9,7 +9,10 @@ export const GET_LAST_ISSUES_FROM_REPOSITORY = gql`
                     node {title, url, state}
                 }
                 pageInfo {
+                    endCursor
                     startCursor
+                    hasNextPage
+                    hasPreviousPage
                 }
             }
         }

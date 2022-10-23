@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    useCallback, useEffect, useMemo, useState
+} from 'react';
 import styled from 'styled-components';
 import {
     ColumnDef,
@@ -11,9 +13,9 @@ import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST
 import { GET_LAST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_LAST_ISSUES_FROM_REPOSITORY';
 import { GET_NEXT_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_NEXT_ISSUES_FROM_REPOSITORY';
 import { GET_PREV_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_PREV_ISSUES_FROM_REPOSITORY';
+import { OWNER, REPOSITORY_NAME, ORDER_BY } from '../../../constants';
 
 //#Спросить - как переиспользовать стили
-
 const StyledPagination = styled.div`
   margin: 1em;
   .pagination-container {
@@ -53,6 +55,11 @@ const StyledPagination = styled.div`
     transition: .2s ease-in-out;
     cursor: pointer;
   }
+  .pagination-button:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+  }
   .pagination-button:before {
     content: "";
     position: absolute;
@@ -80,114 +87,199 @@ const Pagination = () => {
         //#Спросить - нормальна ли такая реализация
         const response = await fetchFirstIssuesQuery({
             variables: {
-                owner: 'facebook',
-                name: 'react',
-                first: 10,
+                owner: OWNER,
+                name: REPOSITORY_NAME,
+                first: pagination.size,
                 states: null,
-                orderBy: {
-                    field: 'CREATED_AT',
-                    direction: 'ASC'
-                }
+                orderBy: ORDER_BY
             }
         });
-        const { edges, pageInfo } = response.data.repository.issues;
-        paginationVar({ ...pagination, endCursor: pageInfo.startCursor });
+        const {
+            edges,
+            pageInfo: {
+                startCursor,
+                endCursor,
+                hasNextPage,
+                hasPreviousPage
+            }
+        } = response.data.repository.issues;
+        paginationVar({
+            ...pagination,
+            startCursor,
+            endCursor,
+            hasNextPage,
+            hasPreviousPage
+        });
         dataVar(edges.map(({ node }) => ({ ...node })));
     };
     const fetchLastIssuesQueryHandler = async () => {
         //#Спросить - нормальна ли такая реализация
         const response = await fetchLastIssuesQuery({
             variables: {
-                owner: 'facebook',
-                name: 'react',
-                last: 10,
+                owner: OWNER,
+                name: REPOSITORY_NAME,
+                last: pagination.size,
                 states: null,
-                orderBy: {
-                    field: 'CREATED_AT',
-                    direction: 'ASC'
-                }
+                orderBy: ORDER_BY
             }
         });
-        const { edges, pageInfo } = response.data.repository.issues;
-        paginationVar({ ...pagination, startCursor: pageInfo.startCursor });
+        const {
+            edges,
+            pageInfo: {
+                startCursor,
+                endCursor,
+                hasNextPage,
+                hasPreviousPage
+            }
+        } = response.data.repository.issues;
+        paginationVar({
+            ...pagination,
+            startCursor,
+            endCursor,
+            hasNextPage,
+            hasPreviousPage
+        });
         dataVar(edges.map(({ node }) => ({ ...node })));
     };
     const fetchNextIssuesQueryHandler = async () => {
         //#Спросить - нормальна ли такая реализация
         const response = await fetchNextIssuesQuery({
             variables: {
-                owner: 'facebook',
-                name: 'react',
-                first: 10,
+                owner: OWNER,
+                name: REPOSITORY_NAME,
+                first: pagination.size,
                 states: null,
                 cursor: pagination.endCursor,
-                orderBy: {
-                    field: 'CREATED_AT',
-                    direction: 'ASC'
-                }
+                orderBy: ORDER_BY
             }
         });
-        const { edges, pageInfo } = response.data.repository.issues;
-        paginationVar({ ...pagination, endCursor: pageInfo.endCursor });
+        const {
+            edges,
+            pageInfo: {
+                startCursor,
+                endCursor,
+                hasNextPage,
+                hasPreviousPage
+            }
+        } = response.data.repository.issues;
+        paginationVar({
+            ...pagination,
+            startCursor,
+            endCursor,
+            hasNextPage,
+            hasPreviousPage
+        });
         dataVar(edges.map(({ node }) => ({ ...node })));
     };
     const fetchPrevIssuesQueryHandler = async () => {
         //#Спросить - нормальна ли такая реализация
         const response = await fetchPrevIssuesQuery({
             variables: {
-                owner: 'facebook',
-                name: 'react',
-                last: 10,
+                owner: OWNER,
+                name: REPOSITORY_NAME,
+                last: pagination.size,
                 states: null,
                 cursor: pagination.startCursor,
-                orderBy: {
-                    field: 'CREATED_AT',
-                    direction: 'ASC'
-                }
+                orderBy: ORDER_BY
             }
         });
-        const { edges, pageInfo } = response.data.repository.issues;
-        paginationVar({ ...pagination, startCursor: pageInfo.startCursor });
+        const {
+            edges,
+            pageInfo: {
+                startCursor,
+                endCursor,
+                hasNextPage,
+                hasPreviousPage
+            }
+        } = response.data.repository.issues;
+        paginationVar({
+            ...pagination,
+            startCursor,
+            endCursor,
+            hasNextPage,
+            hasPreviousPage
+        });
         dataVar(edges.map(({ node }) => ({ ...node })));
     };
+    // const data = useReactiveVar(dataVar);
+    // const columns = useMemo<ColumnDef<TIssue>[]>(
+    //     () => [{
+    //         header: 'Issue',
+    //         footer: (props) => props.column.id,
+    //         columns: [
+    //             {
+    //                 id: 'title',
+    //                 accessorKey: 'title',
+    //                 header: () => <span>Title</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             },
+    //             {
+    //                 id: 'url',
+    //                 accessorKey: 'url',
+    //                 //accessorFn: (row) => row.lastName,
+    //                 header: () => <span>url</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             },
+    //             {
+    //                 id: 'state',
+    //                 accessorKey: 'state',
+    //                 //accessorFn: (row) => row.lastName,
+    //                 header: () => <span>status</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             }
+    //         ]
+    //     }],
+    //     []
+    // );
+    // const table = useReactTable({
+    //     data,
+    //     columns,
+    //     // Pipeline
+    //     getCoreRowModel: getCoreRowModel(),
+    //     getFilteredRowModel: getFilteredRowModel(),
+    //     getPaginationRowModel: getPaginationRowModel(),
+    //     //
+    //     debugTable: true
+    // });
+    const setPaginationSize = useCallback((props) => paginationVar(
+        { ...pagination, size: Number(props.target.value) }), []);
     return (<StyledPagination>
         <div className='pagination-container'>
             <button
                 className='pagination-button'
                 onClick={fetchFirstIssuesQueryHandler}
-                //disabled={!table.getCanPreviousPage()}
+                disabled={!pagination.hasPreviousPage}
             >
                 {'<<'}
             </button>
             <button
                 className='pagination-button'
                 onClick={fetchPrevIssuesQueryHandler}
-                //disabled={!table.getCanPreviousPage()}
+                disabled={!pagination.hasPreviousPage}
             >
                 {'<'}
             </button>
             <button
-                style={{ border: '1px solid blue' }}
                 className='pagination-button'
                 onClick={fetchNextIssuesQueryHandler}
-                //onClick={() => table.nextPage()}
-                //disabled={!table.getCanNextPage()}
+                disabled={!pagination.hasNextPage}
             >
                 {'>'}
             </button>
             <button
                 className='pagination-button'
                 onClick={fetchLastIssuesQueryHandler}
-                // disabled={!table.getCanNextPage()}
+                disabled={!pagination.hasNextPage}
             >
                 {'>>'}
             </button>
             <select
                 className='pagination-size'
-                // value={table.getState().pagination.pageSize}
-                // onChange={(e) => {
-                //     table.setPageSize(Number(e.target.value));
-                // }}
+                onChange={setPaginationSize}
+                value={pagination.size}
             >
                 {[10, 20, 30, 40, 50].map((pageSize) => (
                     <option key={pageSize} value={pageSize}>

@@ -18,6 +18,8 @@ export const GET_NEXT_ISSUES_FROM_REPOSITORY = gql`
                 pageInfo {
                     startCursor
                     endCursor
+                    hasNextPage
+                    hasPreviousPage
                 }
             }
         }

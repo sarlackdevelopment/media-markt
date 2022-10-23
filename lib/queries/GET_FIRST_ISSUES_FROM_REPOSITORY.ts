@@ -11,6 +11,8 @@ export const GET_FIRST_ISSUES_FROM_REPOSITORY = gql`
                 pageInfo {
                     startCursor
                     endCursor
+                    hasNextPage
+                    hasPreviousPage
                 }
             }
         }

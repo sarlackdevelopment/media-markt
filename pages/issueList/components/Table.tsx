@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import {
     ColumnDef,
@@ -8,7 +8,11 @@ import {
     useReactTable,
     flexRender
 } from '@tanstack/react-table';
+import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import { TIssue } from '../index';
+import { dataVar, paginationVar } from '../../../lib/cache';
+import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
+import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 
 const StyledTable = styled.table`
   margin: 1em;
@@ -64,59 +68,138 @@ const StyledTable = styled.table`
   }
 `;
 
-const Table = ({
-    data,
-    columns
-}: {
-    data: TIssue[]
-    columns: ColumnDef<TIssue>[]
-}) => {
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        debugTable: true
-    });
+const Table = () => {
+    const data = useReactiveVar(dataVar);
+    const pagination = useReactiveVar(paginationVar);
+    const [fetchIssuesQuery] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
+    // const columns = useMemo<ColumnDef<TIssue>[]>(
+    //     () => [{
+    //         header: 'Issue',
+    //         footer: (props) => props.column.id,
+    //         columns: [
+    //             {
+    //                 id: 'title',
+    //                 accessorKey: 'title',
+    //                 header: () => <span>Title</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             },
+    //             {
+    //                 id: 'url',
+    //                 accessorKey: 'url',
+    //                 //accessorFn: (row) => row.lastName,
+    //                 header: () => <span>url</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             },
+    //             {
+    //                 id: 'state',
+    //                 accessorKey: 'state',
+    //                 //accessorFn: (row) => row.lastName,
+    //                 header: () => <span>status</span>,
+    //                 cell: (info) => info.getValue()
+    //                 //footer: (props) => props.column.id
+    //             }
+    //         ]
+    //     }],
+    //     []
+    // );
+    const columns = [{
+        id: 'title',
+        header: 'Title'
+    },
+    {
+        id: 'url',
+        header: 'url'
+    },
+    {
+        id: 'state',
+        header: 'state'
+    }];
+    // const table = useReactTable({
+    //     data,
+    //     columns,
+    //     getCoreRowModel: getCoreRowModel(),
+    //     getFilteredRowModel: getFilteredRowModel(),
+    //     getPaginationRowModel: getPaginationRowModel(),
+    //     debugTable: true
+    // });
+    useEffect(() => {
+        (async () => {
+            const response = await fetchIssuesQuery({
+                variables: {
+                    owner: OWNER,
+                    name: REPOSITORY_NAME,
+                    first: pagination.size,
+                    states: null,
+                    orderBy: ORDER_BY
+                }
+            });
+            const {
+                edges,
+                pageInfo: {
+                    startCursor,
+                    endCursor,
+                    hasNextPage,
+                    hasPreviousPage
+                }
+            } = response.data.repository.issues;
+            paginationVar({
+                ...pagination,
+                startCursor,
+                endCursor,
+                hasNextPage,
+                hasPreviousPage
+            });
+            dataVar(edges.map(({ node }) => ({ ...node })));
+        })();
+    }, [pagination.size]);
     return (<StyledTable>
         <table>
+            {/*<thead>*/}
+            {/*    {table.getHeaderGroups().map((headerGroup) => (*/}
+            {/*        <tr key={headerGroup.id}>*/}
+            {/*            {headerGroup.headers.map((header) => (*/}
+            {/*                <th key={header.id} colSpan={header.colSpan}>*/}
+            {/*                    {header.isPlaceholder ? null : (*/}
+            {/*                        <div>*/}
+            {/*                            {flexRender(*/}
+            {/*                                header.column.columnDef.header,*/}
+            {/*                                header.getContext()*/}
+            {/*                            )}*/}
+            {/*                            /!*{header.column.getCanFilter() ? (*!/*/}
+            {/*                            /!*    <div>*!/*/}
+            {/*                            /!*        <Filter column={header.column} table={table} />*!/*/}
+            {/*                            /!*    </div>*!/*/}
+            {/*                            /!*) : null}*!/*/}
+            {/*                        </div>*/}
+            {/*                    )}*/}
+            {/*                </th>*/}
+            {/*            ))}*/}
+            {/*        </tr>*/}
+            {/*    ))}*/}
+            {/*</thead>*/}
             <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                            <th key={header.id} colSpan={header.colSpan}>
-                                {header.isPlaceholder ? null : (
-                                    <div>
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                        {/*{header.column.getCanFilter() ? (*/}
-                                        {/*    <div>*/}
-                                        {/*        <Filter column={header.column} table={table} />*/}
-                                        {/*    </div>*/}
-                                        {/*) : null}*/}
-                                    </div>
-                                )}
-                            </th>
-                        ))}
-                    </tr>
-                ))}
+                {columns.map(({ id, header }) => <th key={id}>{header}</th>)}
             </thead>
             <tbody>
-                {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
-                            <td key={cell.id}>
-                                {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                )}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
+                {data.map(({ title, url, state }) => (<tr key={title}>
+                    <td>{title}</td>
+                    <td>{url}</td>
+                    <td>{state}</td>
+                </tr>))}
+                {/*{table.getRowModel().rows.map((row) => (*/}
+                {/*    <tr key={row.id}>*/}
+                {/*        {row.getVisibleCells().map((cell) => (*/}
+                {/*            <td key={cell.id}>*/}
+                {/*                {flexRender(*/}
+                {/*                    cell.column.columnDef.cell,*/}
+                {/*                    cell.getContext()*/}
+                {/*                )}*/}
+                {/*            </td>*/}
+                {/*        ))}*/}
+                {/*    </tr>*/}
+                {/*))}*/}
             </tbody>
         </table>
     </StyledTable>);

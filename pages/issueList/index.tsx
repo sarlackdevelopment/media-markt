@@ -9,32 +9,29 @@ import Pagination from './components/Pagination';
 import { dataVar, paginationVar } from '../../lib/cache';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 
+import { OWNER, REPOSITORY_NAME, ORDER_BY } from '../../constants';
+import client from '../apollo-client';
+
 export type TIssue = {
     title: string,
     url: string,
     status: string
 }
-
+//
 // export async function getStaticProps() {
 //     const { data } = await client.query({
-//         query: gql`
-//       query {
-//         repository(owner:"facebook", name:"react") {
-//           issues(last:20, states:CLOSED) {
-//             edges {
-//               node {title, url}
-//             }
-//           }
+//         query: GET_FIRST_ISSUES_FROM_REPOSITORY,
+//         variables: {
+//             owner: OWNER,
+//             name: REPOSITORY_NAME,
+//             first: 10,
+//             states: null,
+//             orderBy: ORDER_BY
 //         }
-//       }
-//     `
 //     });
+//     const { edges, pageInfo } = data.repository.issues;
 //
-//     return {
-//         props: {
-//             data
-//         }
-//     };
+//     return edges.map(({ node }) => ({ ...node }));
 // }
 
 // export async function getStaticProps() {
@@ -59,21 +56,13 @@ export type TIssue = {
 //     };
 // }
 
-const DataTable = ({
-    data,
-    columns
-}: {
-    data: TIssue[]
-    columns: ColumnDef<TIssue>[]
-}) => {
+const DataTable = () => {
     console.log(888);
 
     return (
         <>
-            <Table data={data} columns={columns} />
+            <Table />
             <Pagination />
-            {/*  <div>{table.getRowModel().rows.length} Rows</div>*/}
-            {/*  <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>*/}
         </>
     );
 };
@@ -126,138 +115,6 @@ const DataTable = ({
 //     );
 // }
 
-const IssueList: NextPage = () => {
-    const [fetchIssuesQuery] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
-    //const [data, setData] = useState([]);
-    const data = useReactiveVar(dataVar);
-    const pagination = useReactiveVar(paginationVar);
-
-    useEffect(() => {
-        (async () => {
-            const response = await fetchIssuesQuery({
-                variables: {
-                    owner: 'facebook',
-                    name: 'react',
-                    first: 10,
-                    states: null,
-                    orderBy: {
-                        field: 'CREATED_AT',
-                        direction: 'ASC'
-                    }
-                }
-            });
-            const { edges, pageInfo } = response.data.repository.issues;
-            paginationVar({ ...pagination, endCursor: pageInfo.endCursor });
-            dataVar(edges.map(({ node }) => ({ ...node })));
-            // setData(() => response.data.repository.issues.edges.map(({ node }) => ({ ...node })));
-        })();
-    }, []);
-    const columns = useMemo<ColumnDef<TIssue>[]>(
-        () => [{
-            header: 'Issue',
-            footer: (props) => props.column.id,
-            columns: [
-                {
-                    id: 'title',
-                    accessorKey: 'title',
-                    header: () => <span>Title</span>,
-                    cell: (info) => info.getValue()
-                    //footer: (props) => props.column.id
-                },
-                {
-                    id: 'url',
-                    accessorKey: 'url',
-                    //accessorFn: (row) => row.lastName,
-                    header: () => <span>url</span>,
-                    cell: (info) => info.getValue()
-                    //footer: (props) => props.column.id
-                },
-                {
-                    id: 'state',
-                    accessorKey: 'state',
-                    //accessorFn: (row) => row.lastName,
-                    header: () => <span>status</span>,
-                    cell: (info) => info.getValue()
-                    //footer: (props) => props.column.id
-                }
-            ]
-        }
-            // {
-            //     header: 'Title',
-            //     footer: (props) => props.column.id,
-            //     columns: [
-            //         {
-            //             accessorKey: 'firstName',
-            //             cell: (info) => info.getValue(),
-            //             footer: (props) => props.column.id
-            //         },
-            //         {
-            //             accessorFn: (row) => row.lastName,
-            //             id: 'lastName',
-            //             cell: (info) => info.getValue(),
-            //             header: () => <span>Last Name</span>,
-            //             footer: (props) => props.column.id
-            //         }
-            //     ]
-            // },
-            // {
-            //     header: 'Info',
-            //     footer: (props) => props.column.id,
-            //     columns: [
-            //         {
-            //             accessorKey: 'age',
-            //             header: () => 'Age',
-            //             footer: (props) => props.column.id
-            //         },
-            //         {
-            //             header: 'More Info',
-            //             columns: [
-            //                 {
-            //                     accessorKey: 'visits',
-            //                     header: () => <span>Visits</span>,
-            //                     footer: (props) => props.column.id
-            //                 },
-            //                 {
-            //                     accessorKey: 'status',
-            //                     header: 'Status',
-            //                     footer: (props) => props.column.id
-            //                 },
-            //                 {
-            //                     accessorKey: 'progress',
-            //                     header: 'Profile Progress',
-            //                     footer: (props) => props.column.id
-            //                 }
-            //             ]
-            //         }
-            //     ]
-            // }
-        ],
-        []
-    );
-    //const [data, setData] = useState(() => propsPage.data.repository.issues.edges.map(({ node }) => ({ ...node })));
-    //const refreshData = () => setData(() => makeData(10));
-
-    //console.log('-----------');
-    //console.log(propsPage.data.repository.issues.edges.map(({ node }) => ({ ...node })));
-
-    return (
-        <>
-            <DataTable
-                {...{
-                    data,
-                    columns
-                }}
-            />
-            {/*<hr />*/}
-            {/*<div>*/}
-            {/*    <button onClick={() => rerender()}>Force Rerender</button>*/}
-            {/*</div>*/}
-            {/*<div>*/}
-            {/*    <button onClick={() => refreshData()}>Refresh Data</button>*/}
-            {/*</div>*/}
-        </>
-    );
-    // return <>It works!<IssueListWrapper>Some</IssueListWrapper></>
-};
+const IssueList: NextPage = () => <DataTable />;
 
 export default IssueList;

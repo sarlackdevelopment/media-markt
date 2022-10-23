@@ -6,16 +6,20 @@ type TPagination = {
     endCursor: string,
     size: number,
     currentPage: number,
-    totalPage: number
+    totalPage: number,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean
 }
 
-export const dataVar: ReactiveVar<TIssue> = makeVar<TIssue>([]);
+export const dataVar: ReactiveVar<TIssue[]> = makeVar<TIssue[]>([]);
 export const paginationVar: ReactiveVar<TPagination> = makeVar<TPagination>({
     startCursor: '',
     endCursor: '',
     size: 10,
     currentPage: 1,
-    totalPage: 0
+    totalPage: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
 });
 
 export const createCache = () => new InMemoryCache({
