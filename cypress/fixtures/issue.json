@@ -1,0 +1,14 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "id": "MDU6SXNzdWUxNDkyMzk2OA==",
+        "title": "Can't require() react-tools module 321",
+        "body": "I'm trying to programatically invoke the JSX transformer (using the version of `react-tools` in the npm registry) by running something like\n\n```\nrequire('react-tools').transform(someCode);\n```\n\nWhich then throws this error:\n\n```\nError: Cannot find module './build/React'\n```\n\nIf I comment out the lines in `main.js` that require/use `./build/React` the `react-tools` module loads fine and the transformer runs correctly.\n",
+        "url": "https://github.com/facebook/react/issues/10",
+        "__typename": "Issue"
+      },
+      "__typename": "Repository"
+    }
+  }
+}

@@ -78,13 +78,22 @@ const Filters = () => {
         <div className='d-flex'>
             <span className='m-1'>state</span>
             <select
+                data-testid={'filter-by-state'}
                 defaultValue='CLOSED'
                 onChange={(e) => handlerFilter(e.target.value)}
                 className='m-1 select-style'>
-                <option key={STATES.OPEN} value={STATES.OPEN}>
+                <option
+                    data-testid={`filter-by-state-${STATES.OPEN}`}
+                    key={STATES.OPEN}
+                    value={STATES.OPEN}
+                >
                     {STATES.OPEN}
                 </option>
-                <option key={STATES.CLOSED} value={STATES.CLOSED}>
+                <option
+                    key={STATES.CLOSED}
+                    value={STATES.CLOSED}
+                    data-testid={`filter-by-state-${STATES.CLOSED}`}
+                >
                     {STATES.CLOSED}
                 </option>
             </select>

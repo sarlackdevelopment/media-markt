@@ -1,0 +1,129 @@
+{
+  "data": {
+    "repository": {
+      "issues": {
+        "edges": [
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQwNTo0NjowMiswMjowMM4A47jA",
+            "node": {
+              "title": "Can't require() react-tools module 123",
+              "url": "https://github.com/facebook/react/issues/10",
+              "state": "CLOSED",
+              "number": 10,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQwNjozMjoxMCswMjowMM4A47vv",
+            "node": {
+              "title": "Write tests for react-tools module",
+              "url": "https://github.com/facebook/react/issues/12",
+              "state": "CLOSED",
+              "number": 12,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQxNDo0NjoxMSswMjowMM4A4_F8",
+            "node": {
+              "title": "must adding comments for JSX?",
+              "url": "https://github.com/facebook/react/issues/16",
+              "state": "CLOSED",
+              "number": 16,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQxODowMTo1NSswMjowMM4A5Bde",
+            "node": {
+              "title": "Small update to Bower command",
+              "url": "https://github.com/facebook/react/issues/21",
+              "state": "CLOSED",
+              "number": 21,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQyMDowOToyMSswMjowMM4A5Cz_",
+            "node": {
+              "title": "Fix docs Rake \"update_version\" command to strip trailing spaces",
+              "url": "https://github.com/facebook/react/issues/24",
+              "state": "CLOSED",
+              "number": 24,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQyMDo1NTo0OSswMjowMM4A5DYI",
+            "node": {
+              "title": "Make valid npm release",
+              "url": "https://github.com/facebook/react/issues/26",
+              "state": "CLOSED",
+              "number": 26,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQyMjo1MTozMiswMjowMM4A5Ep4",
+            "node": {
+              "title": "React in RequireJS ?",
+              "url": "https://github.com/facebook/react/issues/28",
+              "state": "CLOSED",
+              "number": 28,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNi0wMVQyMjowMToxMSswMjowMM4A5V4s",
+            "node": {
+              "title": "Docs don't even mention reconciliation!",
+              "url": "https://github.com/facebook/react/issues/37",
+              "state": "CLOSED",
+              "number": 37,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNi0wMlQxMTowODoxMCswMjowMM4A5Xaj",
+            "node": {
+              "title": "Is es5-sham required for IE8?",
+              "url": "https://github.com/facebook/react/issues/39",
+              "state": "CLOSED",
+              "number": 39,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          },
+          {
+            "cursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNi0wMlQxNToyNzo0NCswMjowMM4A5X-g",
+            "node": {
+              "title": "Uncaught SyntaxError: Unexpected token < ",
+              "url": "https://github.com/facebook/react/issues/40",
+              "state": "CLOSED",
+              "number": 40,
+              "__typename": "Issue"
+            },
+            "__typename": "IssueEdge"
+          }
+        ],
+        "pageInfo": {
+          "startCursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNS0zMFQwNTo0NjowMiswMjowMM4A47jA",
+          "endCursor": "Y3Vyc29yOnYyOpK5MjAxMy0wNi0wMlQxNToyNzo0NCswMjowMM4A5X-g",
+          "hasNextPage": true,
+          "hasPreviousPage": false,
+          "__typename": "PageInfo"
+        },
+        "__typename": "IssueConnection"
+      },
+      "__typename": "Repository"
+    }
+  }
+}

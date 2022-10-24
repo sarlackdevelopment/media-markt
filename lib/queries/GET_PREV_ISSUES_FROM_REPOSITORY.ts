@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_PREV_ISSUES_FROM_REPOSITORY = gql`
-    query (
+    query Issues(
         $owner: String!, 
         $name: String!,
         $orderBy: IssueOrder,

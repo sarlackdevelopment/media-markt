@@ -135,7 +135,7 @@ const Table = () => {
                     title, url, state, number
                 }) => (
                     <Link key={number} href={{ pathname: `/issue/${number}` }}>
-                        <div className='tr' key={title}>
+                        <div data-testid={`issue-list-number-${number}`} className='tr' key={title}>
                             <span className='td'>{number}</span>
                             <span className='td'>{title}</span>
                             <span className='td'>{url}</span>

@@ -4,7 +4,7 @@ import { createCache } from '../lib/cache';
 const client = new ApolloClient({
     uri: 'https://api.github.com/graphql',
     headers: {
-        Authorization: 'Bearer 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'
+        Authorization: 'Bearer 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'
         //#Спросить - стоит ли держать в открытом доступе
     },
     cache: createCache()
