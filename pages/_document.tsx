@@ -12,9 +12,7 @@ export default class MyDocument extends Document {
     render() {
         return (
             <Html>
-                <Head>
-                    <title>Media Markt</title>
-                </Head>
+                <Head />
                 <body>
                     <Main/>
                     <NextScript/>

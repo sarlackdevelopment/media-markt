@@ -1,11 +1,11 @@
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import { useMemo } from 'react';
-import { dataVar, filtersVar, paginationVar } from '../../../lib/cache';
-import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
-import { GET_LAST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_LAST_ISSUES_FROM_REPOSITORY';
-import { GET_NEXT_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_NEXT_ISSUES_FROM_REPOSITORY';
-import { GET_PREV_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_PREV_ISSUES_FROM_REPOSITORY';
-import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
+import { dataVar, filtersVar, paginationVar } from '../lib/cache';
+import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
+import { GET_LAST_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_LAST_ISSUES_FROM_REPOSITORY';
+import { GET_NEXT_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_NEXT_ISSUES_FROM_REPOSITORY';
+import { GET_PREV_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_PREV_ISSUES_FROM_REPOSITORY';
+import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../constants';
 
 export const usePagination = () => {
     const pagination = useReactiveVar(paginationVar);

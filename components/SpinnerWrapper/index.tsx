@@ -1,5 +1,5 @@
 import ClipLoader from 'react-spinners/ClipLoader';
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
 const StyledSpinner = styled.div`
@@ -14,7 +14,11 @@ const StyledSpinner = styled.div`
   background: rgba(255, 255, 255, 0.5);
 `;
 
-export const SpinnerWrapper = ({ loading }: { loading: boolean }) => (
+type TSpinnerWrapper = {
+    loading: boolean;
+}
+
+export const SpinnerWrapper: FC<TSpinnerWrapper> = ({ loading }) => (
     loading ? <StyledSpinner>
         <ClipLoader
             loading={loading}

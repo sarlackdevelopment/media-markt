@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { errorVar } from '../../../lib/cache';
-import { usePagination } from './usePagination';
-import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
-import { PAGINATION_SIZES } from '../../../constants';
+import { errorVar } from '../../lib/cache';
+import { usePagination } from '../../hooks/usePagination';
+import { SpinnerWrapper } from '../SpinnerWrapper';
+import { PAGINATION_SIZES } from '../../constants';
 
 const StyledPagination = styled.div`
   margin: 1em;
@@ -122,3 +122,5 @@ export default Pagination;
 //-#Как быть с gitignore
 //#Как вернуться на предыдущий роут
 //-#Переложить на индекс страницу со списком и проверить e2e
+//#Типизация запросов
+//SSR

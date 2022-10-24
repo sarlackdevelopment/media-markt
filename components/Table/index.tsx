@@ -1,13 +1,10 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import Link from 'next/link';
-import { dataVar, errorVar, paginationVar } from '../../../lib/cache';
-import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
-import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
-import Filters from './Filters';
-import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
-import { usePagination } from './usePagination';
+import { errorVar } from '../../lib/cache';
+import Filters from '../Filters';
+import { SpinnerWrapper } from '../SpinnerWrapper';
+import { useTableLogic } from './useTableLogic';
 
 const StyledTable = styled.div`
    margin: 1em;
@@ -72,34 +69,9 @@ const StyledTable = styled.div`
 `;
 
 const Table: FC = () => {
-    const data = useReactiveVar(dataVar);
-    const columns = useMemo(() => [{
-        id: 'Number',
-        header: 'Number'
-    },
-    {
-        id: 'title',
-        header: 'Title'
-    },
-    {
-        id: 'url',
-        header: 'url'
-    },
-    {
-        id: 'state',
-        header: 'state'
-    }], []);
     const {
-        fetchFirstIssuesQueryHandler,
-        error,
-        loading,
-        pagination
-    } = usePagination();
-    useEffect(() => {
-        (async () => {
-            await fetchFirstIssuesQueryHandler();
-        })();
-    }, [pagination.size]);
+        data, columns, error, loading
+    } = useTableLogic();
     if (error) {
         errorVar(error);
     }

@@ -1,14 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import {
     ORDER_BY, OWNER, REPOSITORY_NAME, STATES
-} from '../../../constants';
+} from '../../constants';
 import {
     dataVar, errorVar, filtersVar, paginationVar
-} from '../../../lib/cache';
-import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
-import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
+} from '../../lib/cache';
+import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
+import { SpinnerWrapper } from '../SpinnerWrapper';
+import { usePagination } from '../../hooks/usePagination';
+import { useFilterLogic } from './useFilterLogic';
 
 const StyledFilters = styled.div`
   margin: 1em;
@@ -42,38 +44,7 @@ const StyledFilters = styled.div`
 `;
 
 const Filters: FC = () => {
-    const pagination = useReactiveVar(paginationVar);
-    const filters = useReactiveVar(filtersVar);
-    const [fetchIssuesQuery, { loading, error }] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
-    const handlerFilter = async (currentState: string) => {
-        const response = await fetchIssuesQuery({
-            variables: {
-                owner: OWNER,
-                name: REPOSITORY_NAME,
-                first: pagination.size,
-                states: currentState,
-                orderBy: ORDER_BY
-            }
-        });
-        const {
-            edges,
-            pageInfo: {
-                startCursor,
-                endCursor,
-                hasNextPage,
-                hasPreviousPage
-            }
-        } = response.data.repository.issues;
-        paginationVar({
-            ...pagination,
-            startCursor,
-            endCursor,
-            hasNextPage,
-            hasPreviousPage
-        });
-        dataVar(edges.map(({ node }) => ({ ...node })));
-        filtersVar({ ...filters, STATUS: currentState });
-    };
+    const { error, loading, handlerFilter } = useFilterLogic();
     if (error) {
         errorVar(error);
     }
