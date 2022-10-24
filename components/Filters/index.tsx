@@ -1,15 +1,10 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { useLazyQuery, useReactiveVar } from '@apollo/client';
+import { STATES } from '../../constants';
 import {
-    ORDER_BY, OWNER, REPOSITORY_NAME, STATES
-} from '../../constants';
-import {
-    dataVar, errorVar, filtersVar, paginationVar
+    errorVar
 } from '../../lib/cache';
-import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 import { SpinnerWrapper } from '../SpinnerWrapper';
-import { usePagination } from '../../hooks/usePagination';
 import { useFilterLogic } from './useFilterLogic';
 
 const StyledFilters = styled.div`

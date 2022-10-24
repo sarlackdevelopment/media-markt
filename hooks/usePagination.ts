@@ -6,6 +6,17 @@ import { GET_LAST_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_LAST_ISSUES_
 import { GET_NEXT_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_NEXT_ISSUES_FROM_REPOSITORY';
 import { GET_PREV_ISSUES_FROM_REPOSITORY } from '../lib/queries/GET_PREV_ISSUES_FROM_REPOSITORY';
 import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../constants';
+import { TIssue } from '../pages/issueList';
+
+type TData = {
+    edges: TIssue[];
+    pageInfo: {
+        startCursor: string;
+        endCursor: string;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+    };
+}
 
 export const usePagination = () => {
     const pagination = useReactiveVar(paginationVar);
@@ -24,7 +35,7 @@ export const usePagination = () => {
     }] = useLazyQuery(GET_PREV_ISSUES_FROM_REPOSITORY);
     const setPaginationSize = (props: { target: { value: string; }; }) => paginationVar(
         { ...pagination, size: Number(props.target.value) });
-    const storeTableData = (issues) => {
+    const storeTableData = (issues: TData) => {
         const {
             edges,
             pageInfo: {

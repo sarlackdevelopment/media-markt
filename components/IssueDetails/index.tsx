@@ -1,8 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { SpinnerWrapper } from '../SpinnerWrapper';
-import { errorVar } from '../../lib/cache';
-import { useIssueDetails } from './useIssueDetails';
 
 const StyledPagination = styled.div`
   margin: 1em;
@@ -38,15 +35,19 @@ const StyledPagination = styled.div`
   }
 `;
 
-const IssueDetails: FC = () => {
-    const {
-        loading, error, data: {
-            id, title, body, url
-        }
-    } = useIssueDetails();
-    if (error) {
-        errorVar(error);
+type TIssueDetails = {
+    data: {
+        id: string;
+        title: string;
+        body: string;
+        url: string;
     }
+}
+
+const IssueDetails: FC<TIssueDetails> = ({ data }) => {
+    const {
+        id, title, body, url
+    } = data;
     return (<StyledPagination>
         <h3 className='header'>Issue: {id}</h3>
         <div className='table'>
@@ -65,7 +66,6 @@ const IssueDetails: FC = () => {
                 </div>
             </div>
         </div>
-        <SpinnerWrapper loading={loading}/>
     </StyledPagination>);
 };
 
