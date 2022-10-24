@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import Link from 'next/link';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { dataVar, errorVar, paginationVar } from '../../../lib/cache';
 import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 import Filters from './Filters';
+import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
+import { usePagination } from './usePagination';
 
 const StyledTable = styled.div`
    margin: 1em;
@@ -70,10 +71,8 @@ const StyledTable = styled.div`
   }
 `;
 
-const Table = () => {
+const Table: FC = () => {
     const data = useReactiveVar(dataVar);
-    const pagination = useReactiveVar(paginationVar);
-    const [fetchIssuesQuery, { loading, error, data: firstLoading }] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
     const columns = useMemo(() => [{
         id: 'Number',
         header: 'Number'
@@ -90,37 +89,17 @@ const Table = () => {
         id: 'state',
         header: 'state'
     }], []);
+    const {
+        fetchFirstIssuesQueryHandler,
+        error,
+        loading,
+        pagination
+    } = usePagination();
     useEffect(() => {
-        fetchIssuesQuery({
-            variables: {
-                owner: OWNER,
-                name: REPOSITORY_NAME,
-                first: pagination.size,
-                orderBy: ORDER_BY
-            }
-        });
+        (async () => {
+            await fetchFirstIssuesQueryHandler();
+        })();
     }, [pagination.size]);
-    useEffect(() => {
-        if (firstLoading) {
-            const {
-                edges,
-                pageInfo: {
-                    startCursor,
-                    endCursor,
-                    hasNextPage,
-                    hasPreviousPage
-                }
-            } = firstLoading.repository.issues;
-            paginationVar({
-                ...pagination,
-                startCursor,
-                endCursor,
-                hasNextPage,
-                hasPreviousPage
-            });
-            dataVar(edges.map(({ node }) => ({ ...node })));
-        }
-    }, [firstLoading]);
     if (error) {
         errorVar(error);
     }
@@ -144,11 +123,7 @@ const Table = () => {
                     </Link>
                 ))}
             </div>
-            <ClipLoader
-                loading={loading}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-            />
+            <SpinnerWrapper loading={loading} />
         </StyledTable>);
 };
 

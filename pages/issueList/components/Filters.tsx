@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
-import ClipLoader from 'react-spinners/ClipLoader';
 import {
     ORDER_BY, OWNER, REPOSITORY_NAME, STATES
 } from '../../../constants';
-import { dataVar, errorVar, paginationVar } from '../../../lib/cache';
+import {
+    dataVar, errorVar, filtersVar, paginationVar
+} from '../../../lib/cache';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
+import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
 
 const StyledFilters = styled.div`
   margin: 1em;
@@ -39,11 +41,11 @@ const StyledFilters = styled.div`
   }
 `;
 
-const Filters = () => {
+const Filters: FC = () => {
     const pagination = useReactiveVar(paginationVar);
+    const filters = useReactiveVar(filtersVar);
     const [fetchIssuesQuery, { loading, error }] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
     const handlerFilter = async (currentState: string) => {
-        //#Спросить - нормальна ли такая реализация
         const response = await fetchIssuesQuery({
             variables: {
                 owner: OWNER,
@@ -70,6 +72,7 @@ const Filters = () => {
             hasPreviousPage
         });
         dataVar(edges.map(({ node }) => ({ ...node })));
+        filtersVar({ ...filters, STATUS: currentState });
     };
     if (error) {
         errorVar(error);
@@ -98,11 +101,7 @@ const Filters = () => {
                 </option>
             </select>
         </div>
-        <ClipLoader
-            loading={loading}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-        />
+        <SpinnerWrapper loading={loading} />
     </StyledFilters>;
 };
 

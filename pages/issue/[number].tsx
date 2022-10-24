@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import ClipLoader from 'react-spinners/ClipLoader';
 import styled from 'styled-components';
 import { OWNER, REPOSITORY_NAME } from '../../constants';
 import { GET_ISSUE_BY_NUMBER } from '../../lib/queries/GET_ISSUE_BY_NUMBER';
 import { errorVar } from '../../lib/cache';
+import { SpinnerWrapper } from '../../components/SpinnerWrapper';
 
 const StyledPagination = styled.div`
   margin: 1em;
@@ -79,11 +79,7 @@ const Issue = () => {
                 </div>
             </div>
         </div>
-        <ClipLoader
-            loading={loading}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-        />
+        <SpinnerWrapper loading={loading} />
     </StyledPagination>);
 };
 

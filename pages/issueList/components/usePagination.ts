@@ -1,6 +1,6 @@
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
-import { useCallback, useMemo } from 'react';
-import { dataVar, paginationVar } from '../../../lib/cache';
+import { useMemo } from 'react';
+import { dataVar, filtersVar, paginationVar } from '../../../lib/cache';
 import { GET_FIRST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_FIRST_ISSUES_FROM_REPOSITORY';
 import { GET_LAST_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_LAST_ISSUES_FROM_REPOSITORY';
 import { GET_NEXT_ISSUES_FROM_REPOSITORY } from '../../../lib/queries/GET_NEXT_ISSUES_FROM_REPOSITORY';
@@ -9,6 +9,7 @@ import { ORDER_BY, OWNER, REPOSITORY_NAME } from '../../../constants';
 
 export const usePagination = () => {
     const pagination = useReactiveVar(paginationVar);
+    const filters = useReactiveVar(filtersVar);
     const [fetchFirstIssuesQuery, {
         loading: loadingFirstIssues, error: errorFirstIssues
     }] = useLazyQuery(GET_FIRST_ISSUES_FROM_REPOSITORY);
@@ -21,9 +22,9 @@ export const usePagination = () => {
     const [fetchPrevIssuesQuery, {
         loading: loadingPrevIssues, error: errorPrevIssues
     }] = useLazyQuery(GET_PREV_ISSUES_FROM_REPOSITORY);
-    const setPaginationSize = useCallback((props: { target: { value: string; }; }) => paginationVar(
-        { ...pagination, size: Number(props.target.value) }), []);
-    const storeTableData = useCallback((issues) => {
+    const setPaginationSize = (props: { target: { value: string; }; }) => paginationVar(
+        { ...pagination, size: Number(props.target.value) });
+    const storeTableData = (issues) => {
         const {
             edges,
             pageInfo: {
@@ -41,53 +42,49 @@ export const usePagination = () => {
             hasPreviousPage
         });
         dataVar(edges.map(({ node }) => ({ ...node })));
-    }, []);
+    };
     const commonParamsFactory = useMemo(() => ({
         owner: OWNER,
         name: REPOSITORY_NAME,
         orderBy: ORDER_BY
     }), []);
     const fetchFirstIssuesQueryHandler = async () => {
-        //#Спросить - нормальна ли такая реализация
         const response = await fetchFirstIssuesQuery({
             variables: {
                 ...commonParamsFactory,
                 first: pagination.size,
-                states: null
+                states: filters.STATUS
             }
         });
         storeTableData(response.data.repository.issues);
     };
     const fetchLastIssuesQueryHandler = async () => {
-        //#Спросить - нормальна ли такая реализация
         const response = await fetchLastIssuesQuery({
             variables: {
                 ...commonParamsFactory,
                 last: pagination.size,
-                states: null
+                states: filters.STATUS
             }
         });
         storeTableData(response.data.repository.issues);
     };
     const fetchNextIssuesQueryHandler = async () => {
-        //#Спросить - нормальна ли такая реализация
         const response = await fetchNextIssuesQuery({
             variables: {
                 ...commonParamsFactory,
                 first: pagination.size,
-                states: null,
+                states: filters.STATUS,
                 cursor: pagination.endCursor
             }
         });
         storeTableData(response.data.repository.issues);
     };
     const fetchPrevIssuesQueryHandler = async () => {
-        //#Спросить - нормальна ли такая реализация
         const response = await fetchPrevIssuesQuery({
             variables: {
                 ...commonParamsFactory,
                 last: pagination.size,
-                states: null,
+                states: filters.STATUS,
                 cursor: pagination.startCursor
             }
         });

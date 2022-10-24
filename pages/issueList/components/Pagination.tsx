@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { errorVar } from '../../../lib/cache';
 import { usePagination } from './usePagination';
+import { SpinnerWrapper } from '../../../components/SpinnerWrapper';
+import { PAGINATION_SIZES } from '../../../constants';
 
-//#Спросить - как переиспользовать стили
 const StyledPagination = styled.div`
   margin: 1em;
   .pagination-container {
@@ -54,7 +54,7 @@ const StyledPagination = styled.div`
   }
 `;
 
-const Pagination = () => {
+const Pagination: FC = () => {
     const {
         fetchFirstIssuesQueryHandler,
         fetchLastIssuesQueryHandler,
@@ -103,26 +103,22 @@ const Pagination = () => {
                 onChange={setPaginationSize}
                 value={pagination.size}
             >
-                {[10, 20, 30, 40, 50].map((pageSize) => (
+                {PAGINATION_SIZES.map((pageSize) => (
                     <option key={pageSize} value={pageSize}>
                         Show {pageSize}
                     </option>
                 ))}
             </select>
-            <ClipLoader
-                loading={loading}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-            />
+            <SpinnerWrapper loading={loading} />
         </div>
     </StyledPagination>);
 };
 
 export default Pagination;
 
-//#Решить проблему пагинации с фильтром
-//#Решить проблему сброса размера
-//#Решить проблему централизации спиннера
-//#Как быть с gitignore
+//-#Решить проблему пагинации с фильтром
+//-#Решить проблему сброса размера
+//-#Решить проблему централизации спиннера
+//-#Как быть с gitignore
 //#Как вернуться на предыдущий роут
-//#Переложить на индекс страницу со списком и проверить e2e
+//-#Переложить на индекс страницу со списком и проверить e2e
